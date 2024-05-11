@@ -1,0 +1,35 @@
+{% extends 'nav.html' %}
+
+{% block css %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles/main.css' %}">
+{% endblock %}
+
+
+{% block title %} Main {% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="form-analytic">
+        <h4>SPEECH TO TEXT</h4>
+        <form action="" method="post">
+            <div class="input-container">
+                <label class="input-label" for="file">Language (Indonesia)</label>
+                <input type="file" accept="mp3" class="" name="file"
+                        id="file">
+                <span>require mp3</span>
+            </div>
+            <button class="primary"></button>
+        </form>
+        <div>
+            <p>Result Text</p>
+            <div class="result"></div>
+        </div>
+    </div>
+    <div class="other">
+
+    </div>
+</div>
+
+{% endblock %}

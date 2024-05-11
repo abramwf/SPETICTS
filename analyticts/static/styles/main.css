@@ -1,0 +1,17 @@
+.form-analytic {
+    box-shadow: 0px 4px 30px 18px rgba(63, 114, 175, 0.25);
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-container input {
+    background-color: F9F7F7;
+}
+
