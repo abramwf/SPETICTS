@@ -1,0 +1,130 @@
+.body {
+    background-color: #DFEEFF;
+}
+.box{
+    padding-left: 8rem;
+    padding-right: 8rem; 
+    padding-top: 3rem; 
+    padding-bottom: 3rem;
+}
+.profile-pic-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.profile-pic {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    box-shadow: 0px 0px 30px 18px #3f71af40;
+    overflow: hidden;
+}
+img {
+    object-fit: cover;
+}
+.profile-content{
+    margin-top: 50px;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    padding: 3rem; 
+    background: white; 
+    box-shadow: 0px 4px 30px 18px rgba(63, 114, 175, 0.25); 
+    border-radius: 20px; 
+    justify-items: center;
+}
+h1{
+    margin-top: 20px;
+    font-weight: 500;
+    font-size: 40px;
+    color: #3F72AF;
+}
+h2 {
+    margin-top: 0;
+    font-weight: 500;
+    font-size: 30px;
+    color: #3F72AF;
+}
+.profile-short-info{
+    text-align: center;
+}
+.web-info {
+    width: 100%;
+}
+
+.files {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    gap: 2rem;
+}
+
+h3{
+    font-size: larger;
+    color: #112D4E;
+    font-weight: bolder;
+}
+
+.file {
+    display: flex;
+    flex: 1 1 30%;
+    flex-direction: column;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding: 2rem;
+    padding-bottom: 1rem; 
+    background: #9FC0E7; 
+    border-radius: 20px; 
+    justify-items: center;
+}
+
+.file img {
+    border-radius: 10px;
+}
+
+.file h3 {
+    margin-top: 5px;
+}
+
+.file p {
+    color: #4D6480;
+}
+
+.del-more {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.more {
+    align-self: flex-end;
+    justify-self: flex-end;
+    color: #112D4E !important;
+    font-weight: bold !important;
+    flex-direction: row;
+}
+
+.del-file {
+    color: rgb(215, 21, 21);
+}
+
+.project-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.add-project {
+    background-color: #3F72AF;
+    color: white;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.add-project:hover {
+    background-color: #2E5A8A;
+}

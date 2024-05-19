@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+.box{
+    padding-left: 8rem;
+    padding-right: 8rem; 
+    padding-top: 3rem; 
+    padding-bottom: 3rem;
+}
+
 h2 {
     font-size: large;
     color: #112D4E;
@@ -14,16 +21,16 @@ h3{
     font-weight: bolder;
 }
 
-.detil-content {
+.detil-content, .stt-detil{
     display: flex;
     flex-direction: column;
-    margin-left: 8rem; 
+    /* margin-left: 8rem; 
     margin-right: 8rem; 
     margin-top: 3rem; 
-    margin-bottom: 3rem; 
+    margin-bottom: 3rem;  */
     padding: 3rem; 
     background: white; 
-    box-shadow: 0px 4px 30px 18px rgba(63, 114, 175, 0.25); 
+    box-shadow: 0px 4px 10px 5px rgba(63, 114, 175, 0.25); 
     border-radius: 20px; 
     justify-items: center;
 }
@@ -49,12 +56,13 @@ h3{
     width: 100%;
 } */
 #barChart {
-    width: auto;
+    width: max-content;
+    height: 400px;
 }
 
 .other-file {
     display: flex;
-    flex: 1 1 47%;
+    flex: 1 1 45%;
     flex-direction: column;
     margin: 1rem;
     padding: 2rem;
@@ -75,11 +83,11 @@ h3{
 .detil-other {
     display: flex;
     flex-direction: column;
-    margin-left: 8rem; 
-    margin-right: 8rem; 
+    /* margin-left: 8rem; 
+    margin-right: 8rem;  
+    margin-bottom: 3rem; */
     margin-top: 3rem; 
-    margin-bottom: 3rem; 
-    padding: 3rem; 
+    padding: 3rem;  
     background: white; 
     box-shadow: 0px 4px 30px 18px rgba(63, 114, 175, 0.25); 
     border-radius: 20px; 
@@ -92,7 +100,57 @@ h3{
 }
 
 #chart {
-    text-align: center; 
-    margin-top: 20px; 
+    text-align: center;  
     margin-bottom: 10px;
+}
+
+.stt-vz {
+    display: flex;
+    flex-direction: row;
+    background: white; 
+    box-shadow: 0px 4px 10px 4px rgba(63, 114, 175, 0.25); 
+    border-radius: 20px; 
+}
+
+.result-text {
+    border-top: 2px #BFBFBF solid;
+    margin-top: 0.5rem;
+    height: 100%;
+}
+
+#generate-stt {
+    width: min-content;
+    height: min-content;
+    background-color: #3F72AF;
+    color: white;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+    justify-content: center;
+    align-items: center;
+    align-self: flex-end;
+    border-radius: 5px;
+}
+
+.result-box {
+    border: 1px #BFBFBF solid;
+    min-height: 12rem;
+    max-height: calc(100% - 43.8px);
+    padding: 0.5rem;
+}
+
+.sat {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-around;
+}
+
+.SA {
+    width: 30%;
+}
+
+.sa-info .sa-score-box {
+    font-size: small;
 }
