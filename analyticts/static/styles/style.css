@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+h2 {
+    font-size: large;
+    color: #112D4E;
+    font-weight: bold;
+}
+
+h3{
+    font-size: larger;
+    color: #112D4E;
+    font-weight: bolder;
+}
+
+.detil-content {
+    display: flex;
+    flex-direction: column;
+    margin-left: 8rem; 
+    margin-right: 8rem; 
+    margin-top: 3rem; 
+    margin-bottom: 3rem; 
+    padding: 3rem; 
+    background: white; 
+    box-shadow: 0px 4px 30px 18px rgba(63, 114, 175, 0.25); 
+    border-radius: 20px; 
+    justify-items: center;
+}
+
+/* .sat {
+    display: flex; */
+    /* flex-direction: row; */
+    /* justify-content: space-between;
+    justify-items: center;
+    align-items: center; */
+/* } */
+
+/* .sa, .bar-chart {
+    height: 100%;
+}
+
+.sa {
+    width: 100%;
+    margin-right: 20px; /* Memberi jarak antara elemen */
+/*}
+*/
+/* .bar-chart {
+    width: 100%;
+} */
+#barChart {
+    width: auto;
+}
+
+.other-file {
+    display: flex;
+    flex: 1 1 47%;
+    flex-direction: column;
+    margin: 1rem;
+    padding: 2rem;
+    padding-bottom: 1rem; 
+    background: #DFEEFF; 
+    border-radius: 20px; 
+    justify-items: center;
+}
+
+.more {
+    align-self: flex-end;
+    justify-self: flex-end;
+    color: #112D4E;
+    font-weight: bold;
+    flex-direction: row;
+}
+
+.detil-other {
+    display: flex;
+    flex-direction: column;
+    margin-left: 8rem; 
+    margin-right: 8rem; 
+    margin-top: 3rem; 
+    margin-bottom: 3rem; 
+    padding: 3rem; 
+    background: white; 
+    box-shadow: 0px 4px 30px 18px rgba(63, 114, 175, 0.25); 
+    border-radius: 20px; 
+    justify-items: center;
+}
+
+.other-files {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#chart {
+    text-align: center; 
+    margin-top: 20px; 
+    margin-bottom: 10px;
+}
