@@ -138,6 +138,7 @@ h3{
     min-height: 12rem;
     max-height: calc(100% - 43.8px);
     padding: 0.5rem;
+    background-color: #9eb0cc;
 }
 
 .sat {
