@@ -1,17 +1,25 @@
-from django.shortcuts import render, redirect
-from .forms import TranscribeForm
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Transcribe, Sentences, User
 from .forms import TranscribeForm
 from django.http import JsonResponse
 import nltk
 
+# Import paginator
+from django.core.paginator import Paginator
 
 # Create your views here.
 def main(request):
-  return render(request, 'profile-page.html')
+    transcriptions = Transcribe.objects.all()
+
+    # Set up pagination
+    p = Paginator(Transcribe.objects.all(), 3)
+    page = request.GET.get('page')
+    transcriptions = p.get_page(page)
+
+    return render(request, 'dashboard.html', {'transcriptions':transcriptions})
 
 def inputTest(request):
-  return render(request, 'test-input.html')
+    return render(request, 'test-input.html')
 
 
 nltk.download('punkt')
@@ -28,9 +36,8 @@ def transcribe_view(request):
         form = TranscribeForm()
     return render(request, 'test-input.html', {'form': form})
 
-def transcribe_view_save(request):
-    if request.method == 'POST':
-        
+# def transcribe_view_save(request):
+#     if request.method == 'POST':
 
 def transcribe_result(request):
     transcribe_id = request.session.get('transcribe_id')
@@ -41,3 +48,12 @@ def transcribe_result(request):
             sentences = Sentences.objects.filter(id_trans=transcribe_instance)
             return render(request, 'test-input.html', {'sentences': sentences})
     return redirect('transcribe_view')
+
+def detil_view(request,pk):
+    transcribe = get_object_or_404(Transcribe, pk)
+    sentences = Sentences.objects.get(id_trans=transcribe)
+    context= {
+        'transcribe':transcribe,
+        'sentences':sentences
+    }
+    return render(request, 'detil-page.html', context)
