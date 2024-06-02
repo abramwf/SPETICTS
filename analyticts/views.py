@@ -15,8 +15,9 @@ def main(request):
     p = Paginator(Transcribe.objects.all(), 3)
     page = request.GET.get('page')
     transcriptions = p.get_page(page)
+    nums = "a"*transcriptions.paginator.num_pages
 
-    return render(request, 'dashboard.html', {'transcriptions':transcriptions})
+    return render(request, 'dashboard.html', {'transcriptions':transcriptions, 'nums':nums})
 
 def inputTest(request):
     return render(request, 'test-input.html')
