@@ -38,7 +38,7 @@
         
     </style>
     <div class="box">
-        <form action="{% url 'profile' %}" class="profile-pic-container" method="post" enctype="multipart/form-data">
+        <form action="" class="profile-pic-container" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="profile-pic">
                 {% if profile.profile_image %}

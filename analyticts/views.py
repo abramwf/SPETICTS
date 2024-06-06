@@ -5,6 +5,7 @@ from .models import Transcription, Sentence, Named, User
 import google.generativeai as genai
 import spacy
 from django.contrib.auth.decorators import login_required
+from django.core.cache import cache
 
 # Load the spaCy model once at the top of your file
 nlp_ner_last = spacy.load("C:\\Users\\Asus\\Documents\\Kuliah ni bos\\SEM6\\Stupen\\company\\ml\\model-NER\\model-last")
@@ -22,13 +23,13 @@ RETRY_INTERVAL = 10  # Set the time interval between retries (in seconds)
 def main(request):
   return render(request, 'profile-page.html')
 
-@login_required
+
 def query_whisper(file):
     response = requests.post(WHISPER_API_URL, headers=WHISPER_HEADERS, files={"file": file}, params={"task": "transcribe"})
     response.raise_for_status()  
     return response.json()
 
-@login_required
+
 def query_sentiment(payload):
     for _ in range(MAX_RETRIES):
         try:
@@ -113,6 +114,13 @@ def transcribe_audio(request):
               "ada tanda baca (.) lain kecuali pada akhir kalimat. Tolong jika ada tanda baca (.) pada angka atau ejaan uang atau "
               "list angka, tolong diganti dengan (,) saja. jika ada list semisal 1. 2. tolong ganti dengan 1, 2, \n"
             )
+            
+            cache_key = f"gemini_response_{hash(output['text'])}"
+            response = cache.get(cache_key)
+            if not response:
+                response = model.generate_content(prompt + output["text"])
+                cache.set(cache_key, response, timeout=60*60*24)  # Cache for 24 hours
+            
             response = model.generate_content(prompt + output["text"])
             transcription = response.text
             sentences = [sentence.strip() for sentence in transcription.split('.') if sentence]
@@ -234,38 +242,38 @@ def save_results(request):
     return redirect('input')
 
 
-# from django.shortcuts import render, redirect
-# from django.contrib.auth import authenticate, login, logout
-# from django.contrib.auth.models import User
-# from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.contrib import messages
 
-# def register(request):
-#     if request.method == 'POST':
-#         username = request.POST['username']
-#         password = request.POST['password']
-#         if User.objects.filter(username=username).exists():
-#             messages.error(request, 'Username already exists')
-#         else:
-#             user = User.objects.create_user(username=username, password=password)
-#             user.save()
-#             messages.success(request, 'Account created successfully')
-#             return redirect('login')
-#     return render(request, 'register.html')
+def register(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        if User.objects.filter(username=username).exists():
+            messages.error(request, 'Username already exists')
+        else:
+            user = User.objects.create_user(username=username, password=password)
+            user.save()
+            messages.success(request, 'Account created successfully')
+            return redirect('login')
+    return render(request, 'register.html')
 
-# def user_login(request):
-#     if request.method == 'POST':
-#         username = request.POST['username']
-#         password = request.POST['password']
-#         user = authenticate(request, username=username, password=password)
-#         if user is not None:
-#             login(request, user)
-#             return redirect('home')
-#         else:
-#             messages.error(request, 'Invalid credentials')
-#     return render(request, 'login.html')
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('home')
+        else:
+            messages.error(request, 'Invalid credentials')
+    return render(request, 'login.html')
 
-# @login_required
-# def user_logout(request):
-#     logout(request)
-#     return redirect('login')
+@login_required
+def user_logout(request):
+    logout(request)
+    return redirect('login')
 
