@@ -1,0 +1,114 @@
+.result-text .result-box {
+    border-radius: 10px;
+    padding: 10px;
+    background-color: rgb(215, 218, 237);
+    border: none;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+
+.chart-box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.chart-box .sat {
+    display: flex;
+    flex-direction: column;
+}
+
+.response, .ner-container {
+    margin-top: 5px;
+    background-color: rgb(246, 246, 253);
+    padding: 10px;
+    border-radius: 20px;
+}
+
+.chart-box {
+    padding: 20px;
+}
+
+h3.analysis-title {
+    font-size: medium;
+    font-weight: 600;
+}
+
+.positive {
+    color: rgb(22, 204, 49);
+}
+
+.positive:hover {
+    color: rgb(19, 169, 41);
+}
+
+.neutral {
+    color: rgb(198, 216, 29);
+}
+
+.neutral:hover {
+    color: rgb(163, 179, 14);
+}
+
+.negative {
+    color: rgb(216, 52, 52);
+}
+
+.negative:hover {
+    color: rgb(157, 52, 52);
+}
+
+
+.text {
+    position: relative;
+    display: inline-block;
+    font-weight: 600;
+  }
+
+  .text-t p {
+    font-size: smaller;
+  }
+
+  .text:hover {
+    text-decoration: underline;
+  }
+  
+  .text .text-t {
+    visibility: hidden;
+    width: 120px;
+    background-color: rgb(249, 249, 249);
+    color: black;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -60px;
+  }
+  
+  .text .text-t::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: black transparent transparent transparent;
+  }
+
+  .text:hover .text-t {
+    box-shadow: 0px 0px 1px 2px rgba(0,0,0,0.05);
+    visibility: visible;
+  }
+
+  .sentiment {
+    display: inline; /* Display each sentiment span inline */
+}
+
+.sentiment .text {
+    display: inline; /* Display text spans inline */
+}
