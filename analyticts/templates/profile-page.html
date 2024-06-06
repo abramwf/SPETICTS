@@ -21,8 +21,8 @@
                     <a href="home" class="text-white text-xl font-semibold">SPETICS</a>
                 </div>
                 <div class="hidden md:flex items-center space-x-4">
-                    <a href="home" class="text-red-500 hover:text-white">Logout</a>
-                    <img src="../image/WhatsApp Image 2024-05-16 at 03.39.27.jpeg" alt="Profile Picture" class="h-8 w-8 rounded-full">
+                    <a href="{% url 'logout' %}" class="text-red-500 hover:text-white">Logout</a>
+                    <!-- <img src="../image/WhatsApp Image 2024-05-16 at 03.39.27.jpeg" alt="Profile Picture" class="h-8 w-8 rounded-full"> -->
                 </div>
                 <div class="md:hidden">
                     <button class="text-gray-300 hover:text-white focus:outline-none">
@@ -34,16 +34,47 @@
             </div>
         </nav>
     </header>
-    
+    <style>
+        
+    </style>
     <div class="box">
-        <div class="profile-pic-container">
+        <form action="{% url 'profile' %}" class="profile-pic-container" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
             <div class="profile-pic">
-                <img src="{% static 'WhatsApp Image 2024-05-16 at 03.39.27.jpeg' %}" alt="" srcset="">
+                {% if profile.profile_image %}
+                    <img src="{{ profile.profile_image.url }}" alt="Profile Image">
+                {% else %}
+                    <img src="{{ MEDIA_URL }}profile_images/default-profile.png" alt="Default Profile Image">
+                {% endif %}
             </div>
+            {% if profile.profile_image %}
+                <button type="button" onclick="toggleEditForm()">Edit</button>
+                <form method="post" action="{% url 'delete_profile_image' %}">
+                    {% csrf_token %}
+                    <button type="submit">Delete</button>
+                </form>
+                <div id="edit-form" style="display: none;">
+                    <input type="file" accept="image/*" name="profile_image">
+                    <button type="submit">Save</button>
+                </div>
+            {% else %}
+                <input type="file" accept="image/*" name="profile_image">
+                <button type="submit">Save</button>
+            {% endif %}
             <div class="profile-short-info">
-                <h1>Hi, M. Farid Fatchur Rohmad!</h1>
+                <h1>Hi, {{ user.username }}!</h1>
             </div>
-        </div>
+        </form>
+        <script>
+            function toggleEditForm() {
+                var editForm = document.getElementById('edit-form');
+                if (editForm.style.display === 'none') {
+                    editForm.style.display = 'block';
+                } else {
+                    editForm.style.display = 'none';
+                }
+            }
+        </script>
         <div class="profile-content">
             <div class="web-info">
                 <div class="project-header">
@@ -52,7 +83,7 @@
                 </div>
                 <div class="files">
                     <div class="file">
-                        <img src="../image/wcloud.webp" alt="">
+                        <!-- <img src="../image/wcloud.webp" alt=""> -->
                         <h3>Information Technologies Debate</h3>
                         <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulv...</p>
                         <div class="del-more">
@@ -65,7 +96,7 @@
                         </div>
                     </div>
                     <div class="file">
-                        <img src="../image/wcloud.webp" alt="">
+                        <!-- <img src="../image/wcloud.webp" alt=""> -->
                         <h3>Information Technologies Debate</h3>
                         <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulv...</p>
                         <div class="del-more">
@@ -78,7 +109,7 @@
                         </div>
                     </div>
                     <div class="file">
-                        <img src="../image/wcloud.webp" alt="">
+                        <!-- <img src="../image/wcloud.webp" alt=""> -->
                         <h3>Information Technologies Debate</h3>
                         <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulv...</p>
                         <div class="del-more">
