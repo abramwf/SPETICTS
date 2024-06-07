@@ -202,7 +202,7 @@
 
     </div>
     <script>
-        const data = [{
+        {% comment %} const data = [{
             x: ['A', 'B', 'C', 'D'],
             y: [100, 150, 80, 120],
             type: 'bar'
@@ -219,7 +219,23 @@
         };
 
         // Display the chart
-        Plotly.newPlot('barChart', data, layout);
+        Plotly.newPlot('barChart', data, layout); {% endcomment %}
+
+        function confirmSave() {
+            Swal.fire ({
+                title: "Are you sure want to save this file?",
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Save'
+            }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('deleteForm').submit();
+                    }
+            })
+        }
     </script>
 </body>
 

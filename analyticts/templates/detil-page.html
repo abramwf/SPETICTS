@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> 
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         .del:hover{
             color: white;
@@ -37,13 +38,21 @@
         </nav>
     </header>
 
+    <!-- {% if messages %}
+        {% for message in messages %}
+            <div class="alert {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %} -->
+
+
     <div class="box">
         <div class="detil-content" style="">
             <div class="project-name" style="margin-bottom: 1rem;">
                 <h1 class="text-3xl font-bold">{{ transcribe.title }}</h1>
-                <form id="transcribe" method="POST">
+                <form id="deleteForm" method="POST">
                     {% csrf_token %}
-                    <button name="delete" value="{{ transcribe.id }}" style="background: none; border: none; padding: 0; cursor: pointer;">
+                    <input type="hidden" name="delete" value="{{ transcribe.id }}">
+                    <button type="button" name="delete" value="{{ transcribe.id }}" onclick="confirmDelete()" style="background: none; border: none; padding: 0; cursor: pointer;">
                         <i class="bi bi-trash3 del" name="delete"></i>
                     </button>
                 </form>
@@ -141,6 +150,22 @@
 
         // Display the chart
         Plotly.newPlot('barChart', data, layout);
+
+        function confirmDelete() {
+            Swal.fire ({
+                title: "Are you sure want to delete '{{ transcribe.title }}'?",
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Delete'
+            }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('deleteForm').submit();
+                    }
+            })
+        }
     </script>
 </body>
 </html>

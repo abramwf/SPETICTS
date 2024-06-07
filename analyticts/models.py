@@ -29,3 +29,8 @@ class Sentences(models.Model):
     neutral = models.DecimalField(max_digits=5, decimal_places=3, default=0.0)
     sa_tag = models.CharField(max_length=1, choices=SATag.choices, default=SATag.NEUTRAL)
 
+class Named(models.Model):
+    text = models.TextField(default="")
+    transcription = models.ForeignKey(Transcribe, on_delete=models.CASCADE)
+    label = models.TextField(default="")
+

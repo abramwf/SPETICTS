@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Transcribe, Sentences, User
+from .models import Transcribe, Sentences, Named
 from .forms import TranscribeForm
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
@@ -9,6 +9,7 @@ from .models import User
 import google.generativeai as genai
 import spacy
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 # Import paginator
 from django.core.paginator import Paginator
@@ -61,10 +62,17 @@ def detil_view(request,pk):
         'sentences':sentences
     }
     if request.method == 'POST':
-        form = TranscribeForm()
         if 'delete' in request.POST:
-            transcribe.delete()
-            return redirect('home')
+            transcribe_id = request.POST.get('delete')
+            try:
+                transcribe_to_delete = Transcribe.objects.get(pk=transcribe_id)
+                transcribe_to_delete.delete()
+                messages.success(request, "File deleted successfully.")
+                return redirect('home')
+            except Transcribe.DoesNotExist:
+                messages.error(request, "File not found.")
+                return redirect('home')
+
     return render(request, 'detil-page.html', context)
 
 
@@ -259,7 +267,7 @@ def transcribe_audio(request):
         'user':user
     })
 
-@login_required
+# @login_required
 def save_results(request):
     if request.method == 'POST':
         text = request.POST['text']
@@ -271,11 +279,11 @@ def save_results(request):
         named_entities_texts = request.POST.getlist('named_entities_texts')
         named_entities_labels = request.POST.getlist('named_entities_labels')
 
-        transcription = Transcription.objects.create(text=text, file_name=file_name)
+        transcription = Transcribe.objects.create(trans_result=text, title=file_name)
         for sentence, pos, neg, neu in zip(sentences, positive_scores, negative_scores, neutral_scores):
-            Sentence.objects.create(
-                text=sentence,
-                transcription=transcription,
+            Sentences.objects.create(
+                sentence=sentence,
+                id_trans=transcription,
                 positive=pos,
                 negative=neg,
                 neutral=neu
