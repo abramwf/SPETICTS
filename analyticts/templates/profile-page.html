@@ -21,8 +21,8 @@
                     <a href="home" class="text-white text-xl font-semibold">SPETICS</a>
                 </div>
                 <div class="hidden md:flex items-center space-x-4">
-                    <a href="{% url 'logout' %}" class="text-red-500 hover:text-white">Logout</a>
-                    <!-- <img src="../image/WhatsApp Image 2024-05-16 at 03.39.27.jpeg" alt="Profile Picture" class="h-8 w-8 rounded-full"> -->
+                    <a href="home" class="text-red-500 hover:text-white">Logout</a>
+                    <img src="../image/WhatsApp Image 2024-05-16 at 03.39.27.jpeg" alt="Profile Picture" class="h-8 w-8 rounded-full">
                 </div>
                 <div class="md:hidden">
                     <button class="text-gray-300 hover:text-white focus:outline-none">
@@ -38,8 +38,7 @@
         
     </style>
     <div class="box">
-        <form action="" class="profile-pic-container" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
+        <div class="profile-pic-container">
             <div class="profile-pic">
                 {% if profile.profile_image %}
                     <img src="{{ profile.profile_image.url }}" alt="Profile Image">

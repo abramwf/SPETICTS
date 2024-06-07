@@ -1,13 +1,18 @@
-import requests
-import time
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import User, Transcription, Sentence, Named
+# from .forms import TranscribeForm
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+import time, requests
 from django.shortcuts import render, redirect
-from .models import Transcription, Sentence, Named, User
+from .models import User
 import google.generativeai as genai
 import spacy
 from django.contrib.auth.decorators import login_required
-from django.core.cache import cache
 
-# Load the spaCy model once at the top of your file
+# Import paginator
+from django.core.paginator import Paginator
+
 nlp_ner_last = spacy.load("C:\\Users\\Asus\\Documents\\Kuliah ni bos\\SEM6\\Stupen\\company\\ml\\model-NER\\model-last")
 
 WHISPER_API_URL = "https://api-inference.huggingface.co/models/openai/whisper-small"
@@ -21,14 +26,20 @@ RETRY_INTERVAL = 10  # Set the time interval between retries (in seconds)
 
 @login_required
 def main(request):
-  return render(request, 'profile-page.html')
+    transcriptions = Transcription.objects.all()
 
+    # Set up pagination
+    p = Paginator(Transcription.objects.all(), 3)
+    page = request.GET.get('page')
+    transcriptions = p.get_page(page)
+    nums = "a"*transcriptions.paginator.num_pages
+
+    return render(request, 'dashboard.html', {'transcriptions':transcriptions, 'nums':nums})
 
 def query_whisper(file):
-    response = requests.post(WHISPER_API_URL, headers=WHISPER_HEADERS, files={"file": file}, params={"task": "transcribe"})
+    response = requests.post(WHISPER_API_URL, headers=WHISPER_HEADERS, files={"file": file}, params={"task": "transcribe", "language": "indonesian"})
     response.raise_for_status()  
     return response.json()
-
 
 def query_sentiment(payload):
     for _ in range(MAX_RETRIES):
@@ -43,7 +54,38 @@ def query_sentiment(payload):
     print("Error: Unable to retrieve sentiment after maximum retries.")
     return None  # Indicate failure to retrieve sentiment
 
-@login_required
+def inputTest(request):
+    return render(request, 'test-input.html')
+
+
+# def transcribe_view_save(request):
+#     if request.method == 'POST':
+
+# def transcribe_result(request):
+#     transcribe_id = request.session.get('transcribe_id')
+#     if transcribe_id:
+#         transcriptions = Transcribe.objects.filter(id=transcribe_id)
+#         if transcriptions.exists():
+#             transcribe_instance = transcriptions.first()
+#             sentences = Sentences.objects.filter(id_trans=transcribe_instance)
+#             return render(request, 'test-input.html', {'sentences': sentences})
+#     return redirect('transcribe_view')
+
+def detil_view(request,pk):
+    transcribe = get_object_or_404(Transcription, pk=pk)
+    sentences = Sentence.objects.filter(id_trans=transcribe)
+    context= {
+        'transcribe':transcribe,
+        'sentences':sentences
+    }
+    if request.method == 'POST':
+        # form = TranscribeForm()
+        if 'delete' in request.POST:
+            transcribe.delete()
+            return redirect('home')
+    return render(request, 'detil-page.html', context)
+
+
 def transcribe_audio(request):
     user = request.user 
     transcription = None
@@ -114,13 +156,6 @@ def transcribe_audio(request):
               "ada tanda baca (.) lain kecuali pada akhir kalimat. Tolong jika ada tanda baca (.) pada angka atau ejaan uang atau "
               "list angka, tolong diganti dengan (,) saja. jika ada list semisal 1. 2. tolong ganti dengan 1, 2, \n"
             )
-            
-            cache_key = f"gemini_response_{hash(output['text'])}"
-            response = cache.get(cache_key)
-            if not response:
-                response = model.generate_content(prompt + output["text"])
-                cache.set(cache_key, response, timeout=60*60*24)  # Cache for 24 hours
-            
             response = model.generate_content(prompt + output["text"])
             transcription = response.text
             sentences = [sentence.strip() for sentence in transcription.split('.') if sentence]
@@ -221,7 +256,7 @@ def save_results(request):
         named_entities_texts = request.POST.getlist('named_entities_texts')
         named_entities_labels = request.POST.getlist('named_entities_labels')
 
-        transcription = Transcription.objects.create(text=text, file_name=file_name)
+        transcription = Transcription.objects.create(text=text, file_name=file_name, created_by=request.user)
         for sentence, pos, neg, neu in zip(sentences, positive_scores, negative_scores, neutral_scores):
             Sentence.objects.create(
                 text=sentence,
@@ -240,7 +275,6 @@ def save_results(request):
 
         return redirect('input')
     return redirect('input')
-
 
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
@@ -276,4 +310,3 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     return redirect('login')
-
