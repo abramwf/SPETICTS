@@ -9,6 +9,12 @@
     padding-bottom: 3rem;
 }
 
+h1 {
+    font-size: larger;
+    color: #112D4E;
+    font-weight: bold;
+}
+
 h2 {
     font-size: large;
     color: #112D4E;
