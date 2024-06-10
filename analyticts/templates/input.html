@@ -98,45 +98,7 @@
                         </div>
                     </div> -->
                     
-                </div>.entity-text {
-    position: relative;
-    display: inline;
-    font-weight: 600;
-}
-
-.text-t p {
-    font-size: smaller;
-}
-
-.entity-text:hover {
-    text-decoration: underline;
-}
-
-.entity-text::before {
-    content: attr(data-label);
-    position: absolute;
-    background-color: black;
-    color: white;
-    padding: 2px 5px;
-    border-radius: 3px;
-    z-index: 1;
-    top: -25px; /* Menggeser label ke atas */
-    left: 50%; /* Pusat label di atas kata/frasa */
-    transform: translateX(-50%); /* Pusatkan label secara horizontal */
-}
-
-.entity-text:hover::before {
-    visibility: visible;
-}
-
-.entity-text .text-t {
-    display: none;
-}
-
-.entity-text:hover .text-t {
-    visibility: visible;
-}
-
+                </div>
                 <div class="ner-results">
                     <h3 class="analysis-title">Named Entities</h3>
                     <ul class="ner-container">

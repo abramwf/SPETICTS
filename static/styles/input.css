@@ -34,6 +34,20 @@ h3.analysis-title {
     font-weight: 600;
 }
 
+.sentiment-legend {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-left: 20px;
+}
+
+.sentiment-legend span {
+    padding: 5px 10px;
+    border-radius: 3px;
+    color: black;
+    font-weight: bold;
+}
+
 .positive {
     background-color: #ddffc6;
 }

@@ -57,6 +57,11 @@
         <div class="SentimentAnalysis">
             <div class="audio-title">
                 <h3>Sentiment Analysis Result of {{ transcribe.title }}</h3>
+                <div class="sentiment-legend">
+                    <span class="positive">Positive</span>
+                    <span class="neutral">Neutral</span>
+                    <span class="negative">Negative</span>
+                </div>
             </div>
             <div class="translate">
                 {% for sentence in sentences %}
