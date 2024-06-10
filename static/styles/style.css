@@ -175,3 +175,34 @@ i.bi.bi-trash3.del {
 i.bi.bi-trash3.del:hover {
     color: rgb(255, 152, 152);
 }
+
+.audio-title, .translate, .analysis-title {
+    width: 100%; 
+    padding-left: 1rem; 
+    padding-right: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.audio-title, .analysis-title {
+    border-start-start-radius: 20px;
+    border-start-end-radius: 20px;
+    background: white;
+    border: 1px #BFBFBF solid;
+}
+
+.translate {
+    border-end-start-radius: 20px;
+    border-end-end-radius: 20px;
+    background: #F2F7FF; 
+    border: 1px #BFBFBF solid; 
+    flex: 1;
+}
+
+.project-name h1, .other-file title h1 {
+    margin-top: 0 !important; 
+}
+
+.NER {
+    margin-top: 25px;
+}

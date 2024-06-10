@@ -7,7 +7,6 @@
     overflow-y: auto;
 }
 
-
 .chart-box {
     display: flex;
     flex-direction: column;
@@ -36,33 +35,37 @@ h3.analysis-title {
 }
 
 .positive {
-    color: rgb(22, 204, 49);
+    background-color: #ddffc6;
 }
 
 .positive:hover {
-    color: rgb(19, 169, 41);
+    background-color: #bcff90;
 }
 
 .neutral {
-    color: rgb(198, 216, 29);
+    background-color: #c6ddff;
 }
 
 .neutral:hover {
-    color: rgb(163, 179, 14);
+    background-color: #91bdff;
 }
 
 .negative {
-    color: rgb(216, 52, 52);
+    background-color: #ffc6dd;;
 }
 
 .negative:hover {
-    color: rgb(157, 52, 52);
+    background-color: #ff90bc;
 }
 
+.neutral, .positive, .negative {
+    display: inline-block; /* Make sentiment blocks inline */
+    margin-right: 0.5rem; /* Add some spacing */
+}
 
 .text {
     position: relative;
-    display: inline-block;
+    display: inline;
     font-weight: 600;
   }
 

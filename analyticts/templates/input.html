@@ -1,39 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+{% extends "nav-bar.html" %}
+
+{% block styleScript %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'styles/style.css' %}">
     <link rel="stylesheet" href="{% static 'styles/input.css' %}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> 
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-</head>
-<body class="bg-#DFEEFF">  
-    <header>
-        <nav class="bg-gray-800 p-4">
-            <div class="max-w-7xl mx-auto flex items-center justify-between">
-                <div class="flex items-center">
-                    <a href="profile-page.html" class="text-white text-xl font-semibold">SPETICS</a>
-                </div>
-                <div class="hidden md:flex items-center space-x-4">
-                    <a href="#" class="text-red-500 hover:text-white">Logout</a>
-                    <img src="../image/ProfilePic.jpg" alt="Profile Picture" class="h-8 w-8 rounded-full">
-                </div>
-                <div class="md:hidden">
-                    <button class="text-gray-300 hover:text-white focus:outline-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </nav>
-    </header>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% endblock %}
 
-    <div class="box">
+{% block content %}
+<div class="box">
         <div class="stt-vz">
             <form class="stt-detil" method="post" enctype="multipart/form-data" style="width: 25rem;">
                 {% csrf_token %}
@@ -57,7 +32,7 @@
                     </div>
                 </div>
             </form>
-            <form class="chart-box" method="post" action="{% url 'save_results' %}">
+            <form class="chart-box" id="chart-box" method="post" action="{% url 'save_results' %}">
                 <div class="sat">
                     <h3 class="analysis-title">Sentiment Analysis</h3>
                     <div class="response">
@@ -74,27 +49,27 @@
                                 <span class="positive text">
                                     {{ sentence }}.
                                     <span class="positive-t text-t">
-                                        <p class="bigger">Positive: {{ positive }}</p>
-                                        <p class="smaller">Neutral: {{ neutral }}</p>
-                                        <p class="smaller">Negative: {{ negative }}</p>
+                                        <p class="bigger">Positive</p>
+                                        {% comment %} <p class="smaller">Neutral: {{ neutral }}</p>
+                                        <p class="smaller">Negative: {{ negative }}</p> {% endcomment %}
                                     </span>
                                 </span>
                             {% elif neutral > positive and neutral > negative %}
                                 <span class="neutral text">
                                     {{ sentence }}.
                                     <span class="neutral-t text-t">
-                                        <p class="bigger">Neutral: {{ neutral }}</p>
-                                        <p class="smaller">Positive: {{ positive }}</p>
-                                        <p class="smaller">Negative: {{ negative }}</p>
+                                        <p class="bigger">Neutral</p>
+                                        {% comment %} <p class="smaller">Positive: {{ positive }}</p>
+                                        <p class="smaller">Negative: {{ negative }}</p> {% endcomment %}
                                     </span>
                                 </span>
                             {% else %}
                                 <span class="negative text">
                                     {{ sentence }}.
                                     <span class="negative-t text-t">
-                                        <p class="bigger">Negative: {{ negative }}</p>
-                                        <p class="smaller">Neutral: {{ neutral }}</p>
-                                        <p class="smaller">Positive: {{ positive }}</p>
+                                        <p class="bigger">Negative</p>
+                                        {% comment %} <p class="smaller">Neutral: {{ neutral }}</p>
+                                        <p class="smaller">Positive: {{ positive }}</p> {% endcomment %}
                                     </span>
                                 </span>
                             {% endif %}
@@ -123,12 +98,45 @@
                         </div>
                     </div> -->
                     
-                </div>
-                <!-- <div class="wordcloud">
-                    <h2 id="chart">wordcloud</h2>
-                    <img src="../image/wordcloud.svg" alt="" srcset=""
-                        style="width: 100%; height: 400px; object-fit: cover;">
-                </div> -->
+                </div>.entity-text {
+    position: relative;
+    display: inline;
+    font-weight: 600;
+}
+
+.text-t p {
+    font-size: smaller;
+}
+
+.entity-text:hover {
+    text-decoration: underline;
+}
+
+.entity-text::before {
+    content: attr(data-label);
+    position: absolute;
+    background-color: black;
+    color: white;
+    padding: 2px 5px;
+    border-radius: 3px;
+    z-index: 1;
+    top: -25px; /* Menggeser label ke atas */
+    left: 50%; /* Pusat label di atas kata/frasa */
+    transform: translateX(-50%); /* Pusatkan label secara horizontal */
+}
+
+.entity-text:hover::before {
+    visibility: visible;
+}
+
+.entity-text .text-t {
+    display: none;
+}
+
+.entity-text:hover .text-t {
+    visibility: visible;
+}
+
                 <div class="ner-results">
                     <h3 class="analysis-title">Named Entities</h3>
                     <ul class="ner-container">
@@ -202,41 +210,20 @@
 
     </div>
     <script>
-        {% comment %} const data = [{
-            x: ['A', 'B', 'C', 'D'],
-            y: [100, 150, 80, 120],
-            type: 'bar'
-        }];
-
-        // Layout options
-        const layout = {
-            xaxis: {
-                title: 'Categories'
-            },
-            yaxis: {
-                title: 'Values'
-            }
-        };
-
-        // Display the chart
-        Plotly.newPlot('barChart', data, layout); {% endcomment %}
-
-        function confirmSave() {
+        function confirmSave(event) {
+            event.preventDefault(); // Prevent the form from submitting immediately
             Swal.fire ({
-                title: "Are you sure want to save this file?",
-                text: "You won't be able to revert this!",
-                icon: 'warning',
+                title: "Do you want to save the changes?",
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Save'
+                confirmButtonText: "Save",
             }).then((result) => {
-                    if (result.isConfirmed) {
-                        document.getElementById('deleteForm').submit();
-                    }
+                if (result.isConfirmed) {
+                    event.target.submit(); // Submit the form if confirmed
+                }
             })
         }
-    </script>
-</body>
 
-</html>
+        document.getElementById('chart-box').addEventListener('submit', confirmSave);
+        document.getElementById("chart-box").style.display = "block";
+    </script>
+{% endblock %}

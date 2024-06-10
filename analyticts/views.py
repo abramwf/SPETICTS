@@ -16,51 +16,44 @@ from django.core.paginator import Paginator
 
 # Create your views here.
 def main(request):
-    transcriptions = Transcribe.objects.all()
+    try:    
+        transcriptions = Transcribe.objects.all().order_by('-id')
 
-    # Set up pagination
-    p = Paginator(Transcribe.objects.all(), 3)
-    page = request.GET.get('page')
-    transcriptions = p.get_page(page)
-    nums = "a"*transcriptions.paginator.num_pages
+        if not transcriptions.exists():
+            raise Transcribe.DoesNotExist
+        # Set up pagination
+        p = Paginator(Transcribe.objects.all(), 3)
+        page = request.GET.get('page')
+        transcriptions = p.get_page(page)
+        nums = "a"*transcriptions.paginator.num_pages
 
-    return render(request, 'dashboard.html', {'transcriptions':transcriptions, 'nums':nums})
+        return render(request, 'dashboard.html', {'transcriptions':transcriptions, 'nums':nums})
+    except Transcribe.DoesNotExist:
+        messages.error(request, "No projects found, click add project to make a new project")
+        return render(request, 'dashboard.html', {'transcriptions': [], 'nums': ''})
 
-def inputTest(request):
-    return render(request, 'test-input.html')
-
-def transcribe_view(request):
-    if request.method == 'POST':
-        form = TranscribeForm(request.POST)
-        if form.is_valid():
-            transcribe_instance=form.save()
-            #Menyimpan id transcribe
-            request.session['transcribe_id'] = transcribe_instance.id
-            return redirect('transcribe_result')
-    else:
-        form = TranscribeForm()
-    return render(request, 'test-input.html', {'form': form})
-
-# def transcribe_view_save(request):
-#     if request.method == 'POST':
-
-def transcribe_result(request):
-    transcribe_id = request.session.get('transcribe_id')
-    if transcribe_id:
-        transcriptions = Transcribe.objects.filter(id=transcribe_id)
-        if transcriptions.exists():
-            transcribe_instance = transcriptions.first()
-            sentences = Sentences.objects.filter(id_trans=transcribe_instance)
-            return render(request, 'test-input.html', {'sentences': sentences})
-    return redirect('transcribe_view')
-
-def detil_view(request,pk):
+def detil_view(request, pk):
     transcribe = get_object_or_404(Transcribe, pk=pk)
     sentences = Sentences.objects.filter(id_trans=transcribe)
-    context= {
-        'transcribe':transcribe,
-        'sentences':sentences
+    named_entities = Named.objects.filter(transcription=transcribe)
+    
+    entity_list = []
+    for entity in named_entities:
+        entity_info = {
+            'id': entity.id,
+            'label': entity.label,  
+            'text': entity.text,
+        }
+        entity_list.append(entity_info)
+
+    print(f"Named Entities: {named_entities}")
+
+    context = {
+        'transcribe': transcribe,
+        'sentences': sentences,
+        'named_entities': entity_list
     }
+    
     if request.method == 'POST':
         if 'delete' in request.POST:
             transcribe_id = request.POST.get('delete')
@@ -72,12 +65,13 @@ def detil_view(request,pk):
             except Transcribe.DoesNotExist:
                 messages.error(request, "File not found.")
                 return redirect('home')
-
+    
     return render(request, 'detil-page.html', context)
 
 
+
 # Load the spaCy model once at the top of your file
-nlp_ner_last = spacy.load("C:\\Users\\FARID\\OneDrive - Universitas Airlangga\\!Semester 6\\BANGKIT-ACADEMY\\Bizzagi\\project\\model\\model-last")
+nlp_ner_last = spacy.load("./analyticts/last-model/model-last")
 
 WHISPER_API_URL = "https://api-inference.huggingface.co/models/openai/whisper-small"
 WHISPER_HEADERS = {"Authorization": "Bearer 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"}
@@ -139,7 +133,7 @@ def transcribe_audio(request):
 
         if "text" in output:
             print(f"Transcription text: {output['text']}")
-            genai.configure(api_key="AIzaSyAFXT-_UIkJl0e5EKnXIw-o7yhfzIyPCQ8")
+            genai.configure(api_key="AIzaSyC8C8EBUXv4UQvAe5TE9EklBTJgn-OzVXk")
 
             generation_config = {
               "temperature": 1,
@@ -270,31 +264,43 @@ def transcribe_audio(request):
 # @login_required
 def save_results(request):
     if request.method == 'POST':
-        text = request.POST['text']
-        file_name = request.POST['file_name']
-        sentences = request.POST.getlist('sentences')
-        positive_scores = request.POST.getlist('positive')
-        negative_scores = request.POST.getlist('negative')
-        neutral_scores = request.POST.getlist('neutral')
-        named_entities_texts = request.POST.getlist('named_entities_texts')
-        named_entities_labels = request.POST.getlist('named_entities_labels')
+        try:
+            text = request.POST['text']
+            file_name = request.POST['file_name']
+            sentences = request.POST.getlist('sentences')
+            positive_scores = request.POST.getlist('positive')
+            negative_scores = request.POST.getlist('negative')
+            neutral_scores = request.POST.getlist('neutral')
+            named_entities_texts = request.POST.getlist('named_entities_texts')
+            named_entities_labels = request.POST.getlist('named_entities_labels')
 
-        transcription = Transcribe.objects.create(trans_result=text, title=file_name)
-        for sentence, pos, neg, neu in zip(sentences, positive_scores, negative_scores, neutral_scores):
-            Sentences.objects.create(
-                sentence=sentence,
-                id_trans=transcription,
-                positive=pos,
-                negative=neg,
-                neutral=neu
-            )
-        
-        for text, label in zip(named_entities_texts, named_entities_labels):
-            Named.objects.create(
-                text=text,
-                transcription=transcription,
-                label=label
-            )
-
-        return redirect('input')
-    return redirect('input')
+            transcription = Transcribe.objects.create(trans_result=text, title=file_name)
+            for sentence, pos, neg, neu in zip(sentences, positive_scores, negative_scores, neutral_scores):
+                maxScore = max(pos, neg, neu)
+                if pos == maxScore:
+                    sa_tag = Sentences.SATag.POSITIVE
+                elif neg == maxScore:
+                    sa_tag = Sentences.SATag.NEGATIVE
+                else:
+                    sa_tag = Sentences.SATag.NEUTRAL
+                Sentences.objects.create(
+                    sentence=sentence,
+                    id_trans=transcription,
+                    positive=pos,
+                    negative=neg,
+                    neutral=neu,
+                    sa_tag=sa_tag
+                )
+            
+            for text, label in zip(named_entities_texts, named_entities_labels):
+                Named.objects.create(
+                    text=text,
+                    transcription=transcription,
+                    label=label
+                )
+            messages.success(request, "Transcription saved succesfully.")
+        # error handling for save transcribe
+        except Exception as e:
+            messages.error(request, f"An error was found: {e}")
+        return redirect('home')
+    return redirect('home')

@@ -1,171 +1,204 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+{% extends "nav-bar.html" %}
+
+{% block styleScript %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'styles/style.css' %}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> 
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="{% static 'styles/input.css' %}">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         .del:hover{
             color: white;
         }
+        .entity-text {
+            position: relative;
+            display: inline;
+            font-weight: 700;
+            color: #112D4E;
+            white-space:nowrap
+        }
+        
+        .entity-text::before {
+            content: attr(data-label);
+            position: absolute;
+            background-color: black;
+            color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+            z-index: 1;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.3s linear;
+        }
+        
+        .entity-text:hover::before {
+            visibility: visible;
+            opacity: 1;
+            top: 20px; /* Sesuaikan dengan kebutuhan Anda */
+            left: 50%; /* Sesuaikan dengan kebutuhan Anda */
+            transform: translateX(-50%);
+        }
+        
     </style>
-</head>
-<body class="bg-#DFEEFF">  
-    <header>
-        <nav class="bg-gray-800 p-4">
-            <div class="max-w-7xl mx-auto flex items-center justify-between">
-                <div class="flex items-center">
-                    <a href="profile-page.html" class="text-white text-xl font-semibold">SPETICS</a>
-                </div>
-                <div class="hidden md:flex items-center space-x-4">
-                    <a href="profile-page.html" class="text-red-500 hover:text-white">Logout</a>
-                    <img src="{% static 'media/image/profile.jpeg' %}" alt="Profile Picture" class="h-8 w-8 rounded-full">
-                </div>
-                <div class="md:hidden">
-                    <button class="text-gray-300 hover:text-white focus:outline-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </nav>
-    </header>
+{% endblock  %}
 
-    <!-- {% if messages %}
-        {% for message in messages %}
-            <div class="alert {{ message.tags }}">{{ message }}</div>
-        {% endfor %}
-    {% endif %} -->
-
-
-    <div class="box">
-        <div class="detil-content" style="">
-            <div class="project-name" style="margin-bottom: 1rem;">
-                <h1 class="text-3xl font-bold">{{ transcribe.title }}</h1>
-                <form id="deleteForm" method="POST">
-                    {% csrf_token %}
-                    <input type="hidden" name="delete" value="{{ transcribe.id }}">
-                    <button type="button" name="delete" value="{{ transcribe.id }}" onclick="confirmDelete()" style="background: none; border: none; padding: 0; cursor: pointer;">
-                        <i class="bi bi-trash3 del" name="delete"></i>
-                    </button>
-                </form>
+{% block content %}
+<div class="box">
+    <div class="detil-content" style="">
+        <div class="project-name" style="margin-bottom: 1rem;">
+            <h1 class="text-3xl font-bold">{{ transcribe.title }}</h1>
+            <form id="deleteForm" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="delete" value="{{ transcribe.id }}">
+                <button type="button" name="delete" value="{{ transcribe.id }}" onclick="confirmDelete()" style="background: none; border: none; padding: 0; cursor: pointer;">
+                    <i class="bi bi-trash3 del" name="delete"></i>
+                </button>
+            </form>
+        </div>
+        <div class="SentimentAnalysis">
+            <div class="audio-title">
+                <h3>Sentiment Analysis Result of {{ transcribe.title }}</h3>
             </div>
-            <div class="audio-title" style="width: 100%; padding-left: 1rem; padding-right: 1rem; background: white; border: 1px #BFBFBF solid;">
-                <h3>Speech transaltion of anune.mp3</h3>
-            </div>
-            <div class="translate" style="width: 100%; padding-left: 1rem; padding-right: 1rem; background: #F2F7FF; border: 1px #BFBFBF solid; flex: 1;">
+            <div class="translate">
                 {% for sentence in sentences %}
                     {% if sentence.sa_tag == 'O' %}
-                        <span style="background-color: #c6ddff;">{{ sentence.sentence }}</span>
+                        <span class="neutral text">
+                            {{ sentence.sentence }}.
+                            <span class="neutral-t text-t">
+                                <p class="bigger">Neutral</p>
+                            </span>
+                        </span>
                     {% elif sentence.sa_tag == 'P' %}
-                        <span style="background-color: #ddffc6;">{{ sentence.sentence }}</span>
+                        <span class="positive text">
+                            {{ sentence.sentence }}.
+                            <span class="positive-t text-t">
+                                <p class="bigger">Neutral</p>
+                            </span>
+                        </span>
                     {% elif sentence.sa_tag == 'N' %}
-                        <span style="background-color: #ffc6dd;">{{ sentence.sentence }}</span>
+                        <span class="negative text">
+                            {{ sentence.sentence }}.
+                            <span class="negative-t text-t">
+                                <p class="bigger">Neutral</p>
+                            </span>
+                        </span>
                     {% endif %}
                 {% endfor %}
             </div>
-            <div class="nothing" style="margin-left: 3rem; margin-right: 3rem;">
-            </div>
-            <div class="all-chart" style="width: 100;">
-                <div class="sat">
-                    <div class="SA" style="">
-                        <h2 id="chart" style="">Sentiment Analytics</h2>
-                        <div class="sa-score" style="display: flex;">
-                            <p style="font-size: x-large; font-weight: bold; margin-right: 10px; justify-self: center;">score:</p>
-                            <div class="sa-score-box" style="display: flex; height: 40px; width: 100%; border-radius: 5px; align-items: center; justify-content: center; margin-bottom: 10px; background-color: #878282; color: white;">Neutral 0.115</div>
-                        </div>
-                        <div class="sa-info">
-                            <div class="sa-score-box" style="display: flex; height: 40px; width: 100%; align-items: center; justify-content: center; background-color: #3EC15B; color: white;">Positive (0.25 - 1.0)</div>
-                            <div class="sa-score-box" style="display: flex; height: 40px; width: 100%; align-items: center; justify-content: center; background-color: #878282; color: white;">Neutral (-0.25 - 0.25)</div>
-                            <div class="sa-score-box" style="display: flex; height: 40px; width: 100%; align-items: center; justify-content: center; background-color: #E34444; color: white;">Positive (-1.0 - -0.25)</div>
-                        </div>
-                    </div>
-                    <div class="bar-chart" style="">
-                        <h2 id="chart">Bar Chart Topic</h2>
-                        <div id="barChart" style=""></div>
-                    </div>
+        </div>
+        <div class="NER">
+            <div class="ner-results">
+                <div class="audio-title">
+                    <h3>NER Result of {{ transcribe.title }}</h3>
                 </div>
-                <div class="wordcloud">
-                    <h2 id="chart">wordcloud</h2>
-                    <img src="../image/wordcloud.svg" alt="" srcset="" style="width: 100%; height: 600px; object-fit: cover;">
-                </div>
+                <p class="translate">
+                    {% for entity in named_entities %}
+                        {% if entity.label %}
+                            <span class="entity-text" data-label="{{ entity.label }}">{{ entity.text }}</span>
+                        {% else %}
+                            <span class="">{{ entity.text }}</span>
+                        {% endif %}
+                    {% endfor %}
+                </p>
+                {% comment %} <ul class="ner-container">
+                    {% for entity in named_entities %}
+                        <input type="hidden" name="named_entities_texts" value="{{ entity.teks }}">
+                        <input type="hidden" name="named_entities_labels" value="{{ entity.label }}">
+                        {% if entity.label == "" or entity.label == '' %}
+                        <span>{{ entity.teks }}</span>
+                        {% else %}
+                        <span class="ner text">
+                            {{ entity.teks }}
+                            <span class="ner text-t">
+                                {{ entity.label }}
+                            </span>
+                        </span>
+                            
+                        {% endif %}
+                    {% endfor %}
+                </ul> {% endcomment %}
             </div>
         </div>
-        <div class="detil-other">
-            <div class="other-file-title" style="margin-bottom: 1rem;">
-                <h1 class="text-2xl font-bold">Other Latest Input</h1>
+        <div class="nothing" style="margin-left: 3rem; margin-right: 3rem;">
+        </div>
+        <!-- <div class="all-chart" style="width: 100;">
+            <div class="sat">
+                <div class="SA" style="">
+                    <h2 id="chart" style="">Sentiment Analytics</h2>
+                    <div class="sa-score" style="display: flex;">
+                        <p style="font-size: x-large; font-weight: bold; margin-right: 10px; justify-self: center;">score:</p>
+                        <div class="sa-score-box" style="display: flex; height: 40px; width: 100%; border-radius: 5px; align-items: center; justify-content: center; margin-bottom: 10px; background-color: #878282; color: white;">Neutral 0.115</div>
+                    </div>
+                    <div class="sa-info">
+                        <div class="sa-score-box" style="display: flex; height: 40px; width: 100%; align-items: center; justify-content: center; background-color: #3EC15B; color: white;">Positive (0.25 - 1.0)</div>
+                        <div class="sa-score-box" style="display: flex; height: 40px; width: 100%; align-items: center; justify-content: center; background-color: #878282; color: white;">Neutral (-0.25 - 0.25)</div>
+                        <div class="sa-score-box" style="display: flex; height: 40px; width: 100%; align-items: center; justify-content: center; background-color: #E34444; color: white;">Positive (-1.0 - -0.25)</div>
+                    </div>
+                </div>
+                <div class="bar-chart" style="">
+                    <h2 id="chart">Bar Chart Topic</h2>
+                    <div id="barChart" style=""></div>
+                </div>
             </div>
-            <div class="other-files">
-                <div class="other-file">
-                    <h3>anune.mp3</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulv...</p>
-                    <p class="more">
-                        more <i class="bi bi-arrow-right-short" style="font-weight: bold;"></i>
-                    </p> 
-                </div>
-                <div class="other-file">
-                    <h3>anune.mp3</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulv...</p>
-                    <p class="more">
-                        more <i class="bi bi-arrow-right-short" style="font-weight: bold;"></i>
-                    </p>
-                </div>
-                <div class="other-file">
-                    <h3>anune.mp3</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulv...</p>
-                    <p class="more">
-                        more <i class="bi bi-arrow-right-short" style="font-weight: bold;"></i>
-                    </p>
-                </div>
-                <div class="other-file">
-                    <h3>anune.mp3</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulv...</p>
-                    <p class="more">
-                        more <i class="bi bi-arrow-right-short" style="font-weight: bold;"></i>
-                    </p>
-                </div>
-                <p class="more" style="font-size: 20px; text-align: center; width: 100%;">
-                    More <i class="bi bi-arrow-right-short" style="font-weight: bold; justify-self: center; align-self: center;"></i>
+            <div class="wordcloud">
+                <h2 id="chart">wordcloud</h2>
+                <img src="../image/wordcloud.svg" alt="" srcset="" style="width: 100%; height: 600px; object-fit: cover;">
+            </div>
+        </div> -->
+    </div>
+    <div class="detil-other">
+        <div class="other-file-title" style="margin-bottom: 1rem;">
+            <h1 class="text-2xl font-bold">Other Latest Input</h1>
+        </div>
+        <div class="other-files">
+            <div class="other-file">
+                <h3>anune.mp3</h3>
+                <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulv...</p>
+                <p class="more">
+                    more <i class="bi bi-arrow-right-short" style="font-weight: bold;"></i>
+                </p> 
+            </div>
+            <div class="other-file">
+                <h3>anune.mp3</h3>
+                <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulv...</p>
+                <p class="more">
+                    more <i class="bi bi-arrow-right-short" style="font-weight: bold;"></i>
                 </p>
             </div>
+            <div class="other-file">
+                <h3>anune.mp3</h3>
+                <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulv...</p>
+                <p class="more">
+                    more <i class="bi bi-arrow-right-short" style="font-weight: bold;"></i>
+                </p>
+            </div>
+            <div class="other-file">
+                <h3>anune.mp3</h3>
+                <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulv...</p>
+                <p class="more">
+                    more <i class="bi bi-arrow-right-short" style="font-weight: bold;"></i>
+                </p>
+            </div>
+            <p class="more" style="font-size: 20px; text-align: center; width: 100%;">
+                More <i class="bi bi-arrow-right-short" style="font-weight: bold; justify-self: center; align-self: center;"></i>
+            </p>
         </div>
     </div>
-    <script>
-        const data = [
-            { x: ['A', 'B', 'C', 'D'], y: [100, 150, 80, 120], type: 'bar' }
-        ];
-
-        // Layout options
-        const layout = {
-            xaxis: { title: 'Categories' },
-            yaxis: { title: 'Values' }
-        };
-
-        // Display the chart
-        Plotly.newPlot('barChart', data, layout);
-
-        function confirmDelete() {
-            Swal.fire ({
-                title: "Are you sure want to delete '{{ transcribe.title }}'?",
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Delete'
-            }).then((result) => {
-                    if (result.isConfirmed) {
-                        document.getElementById('deleteForm').submit();
-                    }
-            })
-        }
-    </script>
-</body>
-</html>
+</div>
+<script>
+    function confirmDelete() {
+        Swal.fire ({
+            title: "Are you sure want to delete '{{ transcribe.title }}'?",
+            text: "This change is permanent, you can't undo this action!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Delete'
+        }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('deleteForm').submit();
+                }
+        })
+    }
+</script>
+{% endblock %}
