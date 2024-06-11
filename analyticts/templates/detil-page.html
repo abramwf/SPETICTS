@@ -54,73 +54,83 @@
                 </button>
             </form>
         </div>
-        <div class="SentimentAnalysis">
-            <div class="audio-title">
-                <h3>Sentiment Analysis Result of {{ transcribe.title }}</h3>
-                <div class="sentiment-legend">
-                    <span class="positive">Positive</span>
-                    <span class="neutral">Neutral</span>
-                    <span class="negative">Negative</span>
+        <div class="SANER">
+            <div class="SentimentAnalysis">
+                <div class="audio-title">
+                    <h3>Sentiment Analysis</h3>
+                    <div class="sentiment-legend">
+                        <span class="positive">Positive</span>
+                        <span class="neutral">Neutral</span>
+                        <span class="negative">Negative</span>
+                    </div>
+                </div>
+                <div class="translate">
+                    {% for sentence in sentences %}
+                        {% if sentence.sa_tag == 'O' %}
+                            <span class="neutral text">
+                                {{ sentence.sentence }}.
+                                <span class="neutral-t text-t">
+                                    <p class="bigger">Neutral</p>
+                                </span>
+                            </span>
+                        {% elif sentence.sa_tag == 'P' %}
+                            <span class="positive text">
+                                {{ sentence.sentence }}.
+                                <span class="positive-t text-t">
+                                    <p class="bigger">Neutral</p>
+                                </span>
+                            </span>
+                        {% elif sentence.sa_tag == 'N' %}
+                            <span class="negative text">
+                                {{ sentence.sentence }}.
+                                <span class="negative-t text-t">
+                                    <p class="bigger">Neutral</p>
+                                </span>
+                            </span>
+                        {% endif %}
+                    {% endfor %}
                 </div>
             </div>
-            <div class="translate">
-                {% for sentence in sentences %}
-                    {% if sentence.sa_tag == 'O' %}
-                        <span class="neutral text">
-                            {{ sentence.sentence }}.
-                            <span class="neutral-t text-t">
-                                <p class="bigger">Neutral</p>
+            <div class="NER">
+                <div class="ner-results">
+                    <div class="audio-title">
+                        <h3>NER Result</h3>
+                    </div>
+                    <p class="translate">
+                        {% for entity in named_entities %}
+                            {% if entity.label %}
+                                <span class="entity-text" data-label="{{ entity.label }}">{{ entity.text }}</span>
+                            {% else %}
+                                <span class="">{{ entity.text }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    </p>
+                    {% comment %} <ul class="ner-container">
+                        {% for entity in named_entities %}
+                            <input type="hidden" name="named_entities_texts" value="{{ entity.teks }}">
+                            <input type="hidden" name="named_entities_labels" value="{{ entity.label }}">
+                            {% if entity.label == "" or entity.label == '' %}
+                            <span>{{ entity.teks }}</span>
+                            {% else %}
+                            <span class="ner text">
+                                {{ entity.teks }}
+                                <span class="ner text-t">
+                                    {{ entity.label }}
+                                </span>
                             </span>
-                        </span>
-                    {% elif sentence.sa_tag == 'P' %}
-                        <span class="positive text">
-                            {{ sentence.sentence }}.
-                            <span class="positive-t text-t">
-                                <p class="bigger">Neutral</p>
-                            </span>
-                        </span>
-                    {% elif sentence.sa_tag == 'N' %}
-                        <span class="negative text">
-                            {{ sentence.sentence }}.
-                            <span class="negative-t text-t">
-                                <p class="bigger">Neutral</p>
-                            </span>
-                        </span>
-                    {% endif %}
-                {% endfor %}
+                                
+                            {% endif %}
+                        {% endfor %}
+                    </ul> {% endcomment %}
+                </div>
             </div>
         </div>
-        <div class="NER">
-            <div class="ner-results">
-                <div class="audio-title">
-                    <h3>NER Result of {{ transcribe.title }}</h3>
-                </div>
-                <p class="translate">
-                    {% for entity in named_entities %}
-                        {% if entity.label %}
-                            <span class="entity-text" data-label="{{ entity.label }}">{{ entity.text }}</span>
-                        {% else %}
-                            <span class="">{{ entity.text }}</span>
-                        {% endif %}
-                    {% endfor %}
-                </p>
-                {% comment %} <ul class="ner-container">
-                    {% for entity in named_entities %}
-                        <input type="hidden" name="named_entities_texts" value="{{ entity.teks }}">
-                        <input type="hidden" name="named_entities_labels" value="{{ entity.label }}">
-                        {% if entity.label == "" or entity.label == '' %}
-                        <span>{{ entity.teks }}</span>
-                        {% else %}
-                        <span class="ner text">
-                            {{ entity.teks }}
-                            <span class="ner text-t">
-                                {{ entity.label }}
-                            </span>
-                        </span>
-                            
-                        {% endif %}
-                    {% endfor %}
-                </ul> {% endcomment %}
+        <div class="wordcloud" style="margin-top: 25px;">
+            <div class="audio-title">
+                <h3>Word Cloud</h3>
+            </div>
+            <div class="translate">
+                <img src="data:image/png;base64,{{ wordcloud }}" alt="Word Cloud">
             </div>
         </div>
         <div class="nothing" style="margin-left: 3rem; margin-right: 3rem;">

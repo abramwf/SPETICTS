@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body{
+    overflow-y:initial;
+}
+
 .box{
     padding-left: 8rem;
     padding-right: 8rem; 
@@ -176,6 +180,13 @@ i.bi.bi-trash3.del:hover {
     color: rgb(255, 152, 152);
 }
 
+.audio-title {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .audio-title, .translate, .analysis-title {
     width: 100%; 
     padding-left: 1rem; 
@@ -203,7 +214,30 @@ i.bi.bi-trash3.del:hover {
     margin-top: 0 !important; 
 }
 
-.NER {
-    margin-top: 25px;
+.NER .audio-title {
+    height: 51.6px !important;
+}
+@media only screen and (min-width: 1359px) {
+    .SANER {
+        display: flex;
+        flex: 1 1;
+        flex-direction: row;
+        gap: 20px;
+    }
 }
 
+.SANER .translate {
+    overflow-y: hidden;
+    overflow-x: hidden;
+    max-height: 300px;
+}
+
+.SANER .translate:hover {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 300px;
+}
+
+/* .SentimentAnalysis, .NER {
+    width: 405;
+} */

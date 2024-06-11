@@ -67,6 +67,7 @@ h3{
 
 .file {
     display: flex;
+    max-width: 30%;
     flex: 1 1 30%;
     flex-direction: column;
     margin-top: 1rem;
@@ -127,4 +128,22 @@ h3{
 
 .add-project:hover {
     background-color: #2E5A8A;
+}
+
+.no-projects {
+    display: flex;
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
+    height: 100%; 
+    text-align: center;
+}
+
+.no-projects-text {
+    color: #a1b9d7;
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    width: 100%;
+    align-self: center; 
 }
