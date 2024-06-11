@@ -227,12 +227,6 @@ i.bi.bi-trash3.del:hover {
 }
 
 .SANER .translate {
-    overflow-y: hidden;
-    overflow-x: hidden;
-    max-height: 300px;
-}
-
-.SANER .translate:hover {
     overflow-y: auto;
     overflow-x: hidden;
     max-height: 300px;

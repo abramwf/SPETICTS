@@ -1,0 +1,37 @@
+{% extends "nav-bar.html" %}
+
+{% block styleScript %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'styles/style.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% endblock  %}
+
+{% block content %}
+{% block other %}
+
+{% endblock other %}
+<div class="detil-other">
+    <div class="other-file-title" style="margin-bottom: 1rem;">
+        <h1 class="text-2xl font-bold">Other Latest Input</h1>
+    </div>
+    <div class="other-files">
+        {% for transcribe in transcriptions %}
+            <div class="other-file">
+                <h3>{{ transcribe.title }}</h3>
+                <p>{{ transcribe.trans_result|truncatewords:20 }}</p>
+                <a class="more" href="{% url 'detil_view' transcribe.id %}">
+                    <p class="more">
+                        more <i class="bi bi-arrow-right-short" style="font-weight: bold;"></i>
+                    </p> 
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+    <a class="more" href="{% url "home" %}">
+        <p class="more" style="font-size: 20px; text-align: center; width: 100%;">
+            More <i class="bi bi-arrow-right-short"
+                style="font-weight: bold; justify-self: center; align-self: center;"></i>
+        </p>
+    </a>
+</div>
+{% endblock %}

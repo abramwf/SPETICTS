@@ -61,8 +61,16 @@ def main(request):
     }
     return render(request, 'dashboard.html', context)
 
+def other_view(request):
+    transcriptions = Transcribe.objects.all().order_by('-id')
+    context = {
+        'transcriptions': transcriptions
+    }
+    return render(request, 'other.html', context)
+
 def detil_view(request, pk):
     transcribe = get_object_or_404(Transcribe, pk=pk)
+    transcriptions = Transcribe.objects.all().order_by('-id')
     sentences = Sentences.objects.filter(id_trans=transcribe)
     named_entities = Named.objects.filter(transcription=transcribe)
     
@@ -85,7 +93,8 @@ def detil_view(request, pk):
         'transcribe': transcribe,
         'sentences': sentences,
         'named_entities': entity_list,
-        'wordcloud': image_base64
+        'wordcloud': image_base64,
+        'transcriptions': transcriptions
     }
     
     if request.method == 'POST':
@@ -136,6 +145,8 @@ def query_sentiment(payload):
     return None  # Indicate failure to retrieve sentiment
 
 def transcribe_audio(request):
+    trans = Transcribe.objects.all().order_by('-id')[:4]
+
     user = request.user 
     transcription = None
     error = None
@@ -233,7 +244,8 @@ def transcribe_audio(request):
                     'sentences_with_sentiment': sentences_with_sentiment,
                     'named_entities': named_entities,
                     'file_name': file_name,
-                    'user':user
+                    'user':user,
+                    'trans': trans
                 })
 
             for sentence, sentiment in zip(sentences, sentiment_results):
@@ -254,7 +266,8 @@ def transcribe_audio(request):
                         'named_entities': named_entities,
                         'file_name': file_name,
                         'user':user,
-                        'wordcloud': image_base64
+                        'wordcloud': image_base64,
+                        'trans': trans
                     })
 
             doc_last = nlp_ner_last(transcription)
@@ -295,7 +308,8 @@ def transcribe_audio(request):
         'named_entities': named_entities,
         'file_name': file_name,
         'user':user,
-        'wordcloud': image_base64
+        'wordcloud': image_base64,
+        'trans':trans
     })
 
 # @login_required

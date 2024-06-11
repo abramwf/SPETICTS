@@ -135,45 +135,25 @@
                 <h1 class="text-2xl font-bold">Other Latest Input</h1>
             </div>
             <div class="other-files">
-                <div class="other-file">
-                    <h3>anune.mp3</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce
-                        posuere, magna sed pulv...</p>
-                    <p class="more">
-                        more <i class="bi bi-arrow-right-short" style="font-weight: bold;"></i>
-                    </p>
-                </div>
-                <div class="other-file">
-                    <h3>anune.mp3</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce
-                        posuere, magna sed pulv...</p>
-                    <p class="more">
-                        more <i class="bi bi-arrow-right-short" style="font-weight: bold;"></i>
-                    </p>
-                </div>
-                <div class="other-file">
-                    <h3>anune.mp3</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce
-                        posuere, magna sed pulv...</p>
-                    <p class="more">
-                        more <i class="bi bi-arrow-right-short" style="font-weight: bold;"></i>
-                    </p>
-                </div>
-                <div class="other-file">
-                    <h3>anune.mp3</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce
-                        posuere, magna sed pulv...</p>
-                    <p class="more">
-                        more <i class="bi bi-arrow-right-short" style="font-weight: bold;"></i>
-                    </p>
-                </div>
+                {% for transcribe in trans %}
+                    <div class="other-file">
+                        <h3>{{ transcribe.title }}</h3>
+                        <p>{{ transcribe.trans_result|truncatewords:20 }}</p>
+                        <a class="more" href="{% url 'detil_view' transcribe.id %}">
+                            <p class="more">
+                                more <i class="bi bi-arrow-right-short" style="font-weight: bold;"></i>
+                            </p> 
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+            <a class="more" href="{% url "home" %}">
                 <p class="more" style="font-size: 20px; text-align: center; width: 100%;">
                     More <i class="bi bi-arrow-right-short"
                         style="font-weight: bold; justify-self: center; align-self: center;"></i>
                 </p>
-            </div>
+            </a>
         </div>
-
     </div>
     <script>
         function confirmSave(event) {
