@@ -5,6 +5,16 @@
     <link rel="stylesheet" href="{% static 'styles/style.css' %}">
     <link rel="stylesheet" href="{% static 'styles/input.css' %}">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .sat .translate, .ner-results .translate {
+            max-height: 175px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .translate {
+            margin-bottom: 10px;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -32,103 +42,81 @@
                     </div>
                 </div>
             </form>
-            <form class="chart-box" id="chart-box" method="post" action="{% url 'save_results' %}">
-                <div class="sat">
-                    <h3 class="analysis-title">Sentiment Analysis</h3>
-                    <div class="response">
-                        {% csrf_token %}
-                        <input type="hidden" name="text" value="{{ transcription }}">
-                        <input type="hidden" name="file_name" value="{{ file_name }}">
-                        {% for sentence, positive, negative, neutral in sentences_with_sentiment %}
-                        <input type="hidden" name="sentences" value="{{ sentence }}">
-                        <div class="sentiment">
-                            <input type="hidden" name="positive" value="{{ positive }}">
-                            <input type="hidden" name="neutral" value="{{ neutral }}">
-                            <input type="hidden" name="negative" value="{{ negative }}">
-                            {% if positive > neutral and positive > negative %}
-                                <span class="positive text">
-                                    {{ sentence }}.
-                                    <span class="positive-t text-t">
-                                        <p class="bigger">Positive</p>
-                                        {% comment %} <p class="smaller">Neutral: {{ neutral }}</p>
-                                        <p class="smaller">Negative: {{ negative }}</p> {% endcomment %}
-                                    </span>
-                                </span>
-                            {% elif neutral > positive and neutral > negative %}
-                                <span class="neutral text">
-                                    {{ sentence }}.
-                                    <span class="neutral-t text-t">
-                                        <p class="bigger">Neutral</p>
-                                        {% comment %} <p class="smaller">Positive: {{ positive }}</p>
-                                        <p class="smaller">Negative: {{ negative }}</p> {% endcomment %}
-                                    </span>
-                                </span>
-                            {% else %}
-                                <span class="negative text">
-                                    {{ sentence }}.
-                                    <span class="negative-t text-t">
-                                        <p class="bigger">Negative</p>
-                                        {% comment %} <p class="smaller">Neutral: {{ neutral }}</p>
-                                        <p class="smaller">Positive: {{ positive }}</p> {% endcomment %}
-                                    </span>
-                                </span>
-                            {% endif %}
+            <div class="container">
+                {% if transcription %}
+                    <form class="chart-box" id="chart-box" method="post" action="{% url 'save_results' %}">
+                        <div class="sat">
+                            <h3 class="analysis-title">Sentiment Analysis</h3>
+                            <div class="translate">
+                                {% csrf_token %}
+                                <input type="hidden" name="text" value="{{ transcription }}">
+                                <input type="hidden" name="file_name" value="{{ file_name }}">
+                                {% for sentence, positive, negative, neutral in sentences_with_sentiment %}
+                                <input type="hidden" name="sentences" value="{{ sentence }}">
+                                <div class="sentiment">
+                                    <input type="hidden" name="positive" value="{{ positive }}">
+                                    <input type="hidden" name="neutral" value="{{ neutral }}">
+                                    <input type="hidden" name="negative" value="{{ negative }}">
+                                    {% if positive > neutral and positive > negative %}
+                                        <span class="positive text">
+                                            {{ sentence }}.
+                                            <span class="positive-t text-t">
+                                                <p class="bigger">Positive</p>
+                                            </span>
+                                        </span>
+                                    {% elif neutral > positive and neutral > negative %}
+                                        <span class="neutral text">
+                                            {{ sentence }}.
+                                            <span class="neutral-t text-t">
+                                                <p class="bigger">Neutral</p>
+                                            </span>
+                                        </span>
+                                    {% else %}
+                                        <span class="negative text">
+                                            {{ sentence }}.
+                                            <span class="negative-t text-t">
+                                                <p class="bigger">Negative</p>
+                                            </span>
+                                        </span>
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>                    
                         </div>
-                        {% endfor %}
-                    </div>                    
-                    <!-- <div class="SA" style="width: auto;">
-                        <h2 id="chart" style="margin-top: 0;">Sentiment Analytics</h2>
-                        <div class="sa-score" style="display: flex;">
-                            <p style="font-size: x-large; font-weight: bold; margin-right: 10px; justify-self: center;">
-                                score:</p>
-                            <div class="sa-score-box"
-                                style="display: flex; height: 40px; width: 100%; border-radius: 5px; align-items: center; justify-content: center; margin-bottom: 10px; border: 2px solid rgb(31 41 55); color: rgb(31 41 55); font-weight: 600;">
-                                0.115</div>
+                        <div class="ner-results">
+                            <h3 class="analysis-title">Named Entities</h3>
+                            <ul class="translate">
+                                {% for entity in named_entities %}
+                                    <input type="hidden" name="named_entities_texts" value="{{ entity.teks }}">
+                                    <input type="hidden" name="named_entities_labels" value="{{ entity.label }}">
+                                    {% if entity.label == "" or entity.label == '' %}
+                                    <span>{{ entity.teks }}</span>
+                                    {% else %}
+                                    <span class="ner text">
+                                        {{ entity.teks }}
+                                        <span class="ner text-t">
+                                            {{ entity.label }}
+                                        </span>
+                                    </span>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
                         </div>
-                        <div class="sa-info" style=" border-radius: 10px; overflow: hidden;">
-                            <div class="sa-score-box"
-                                style="display: flex; height: 40px; width: 100%; align-items: center; justify-content: center; background-color: #abff6b; color: rgb(31 41 55); font-weight: 500;">
-                                Positive (0.25 - 1.0)</div>
-                            <div class="sa-score-box"
-                                style="display: flex; height: 40px; width: 100%; align-items: center; justify-content: center; background-color: #f3f7b0; color: rgb(31 41 55); font-weight: 500;">
-                                Neutral (-0.25 - 0.25)</div>
-                            <div class="sa-score-box"
-                                style="display: flex; height: 40px; width: 100%; align-items: center; justify-content: center; background-color: #ffa476; color: rgb(31 41 55); font-weight: 500;">
-                                Negative (-1.0 - -0.25)</div>
+                        <div class="wordcloud">
+                            <h3 class="analysis-title">Word Cloud</h3>
+                            <div class="translate">
+                                <img src="data:image/png;base64,{{ wordcloud }}" alt="Word Cloud">
+                            </div>
                         </div>
-                    </div> -->
-                    
-                </div>
-                <div class="ner-results">
-                    <h3 class="analysis-title">Named Entities</h3>
-                    <ul class="ner-container">
-                        {% for entity in named_entities %}
-                            <input type="hidden" name="named_entities_texts" value="{{ entity.teks }}">
-                            <input type="hidden" name="named_entities_labels" value="{{ entity.label }}">
-                            {% if entity.label == "" or entity.label == '' %}
-                            <span>{{ entity.teks }}</span>
-                            {% else %}
-                            <span class="ner text">
-                                {{ entity.teks }}
-                                <span class="ner text-t">
-                                    {{ entity.label }}
-                                </span>
-                            </span>
-                                
-                            {% endif %}
-                        {% endfor %}
-                    </ul>
-                    <div class="wordcloud">
-                        <h3>Word Cloud</h3>
-                        <img src="data:image/png;base64,{{ wordcloud }}" alt="Word Cloud">
+                        <button type="submit" id="generate-stt">Save</button>
+                    </form>
+                {% else %}
+                    <div class="placeholder">
+                        <img src="{% static 'media/image/AudioFile.svg' %}" alt="Audio File">
+                        <h4 class="no-projects-text" style="color: #a1b9d7; font-size: 18px; font-weight: 500; margin-bottom: 20px; align-self: center;">No file attached, please choose file and generate! </h4>
                     </div>
-                    <!-- <div class="bar-chart" style="">
-                        <h2 id="chart">Bar Chart Topic</h2>
-                        <div id="barChart" style=""></div>
-                    </div> -->
-                </div>
-                <button type="submit" id="generate-stt">Save</button>
-            </form>
+                {% endif %}
+            </div>
         </div>
         <div class="detil-other">
             <div class="other-file-title" style="margin-bottom: 1rem;">
@@ -156,6 +144,19 @@
         </div>
     </div>
     <script>
+        document.querySelector('.stt-detil').addEventListener('submit', function(event) {
+            var audioInput = document.querySelector('input[name="audio"]');
+            if (audioInput.files.length === 0) {
+                event.preventDefault(); // Prevent the form from submitting
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'No file attached, please choose an audio file of .mp3/ .mpeg!',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+
         function confirmSave(event) {
             event.preventDefault(); // Prevent the form from submitting immediately
             Swal.fire ({

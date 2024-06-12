@@ -44,10 +44,10 @@ def main(request):
         doc = [transcribe.trans_result]  # Assuming the transcribe model has a trans_result field
 
         # Debugging output
-        print(f"Generating word cloud for transcription ID {transcribe.id} with content: {doc}")
+        # print(f"Generating word cloud for transcription ID {transcribe.id} with content: {doc}")
 
         wordcloud_image = load_wordcloud(doc, stop_words)
-        print(wordcloud_image)
+        # print(wordcloud_image)
 
         # if wordcloud_image:
         #     wordclouds[transcribe.id] = wordcloud_image  # Save the wordcloud per transcription id

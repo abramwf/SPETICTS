@@ -135,3 +135,20 @@ h3.analysis-title {
 .sentiment .text {
     display: inline; /* Display text spans inline */
 }
+
+.placeholder {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.placeholder img {
+    width: 200px;
+    height: auto;
+}
+
+.placeholder h4 {
+    text-align: center;
+}
